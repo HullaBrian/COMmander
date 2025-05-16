@@ -6,6 +6,8 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
+// TODO: Implement process filtering
+
 namespace ETW
 {
     class Program
@@ -88,18 +90,18 @@ namespace ETW
 
                         foreach (Filter.Rule rule in rules)
                         {
-                            if (string.Equals(rule.InterfaceUUID, Convert.ToString(interfaceUuidObj)) && string.Equals(rule.OpNum, Convert.ToString(procNumObj)) && string.Equals(rule.Endpoint, Convert.ToString(endpoint)))
+                            if (Filter.Filter.EvaluateRule(rule, interface_uuid, procNumObj, endpoint))
                             {
                                 if (procNumObj != null)
                                 {
-                                    Console.WriteLine($"[!] Rule {rule.Name}({rule.ID}) triggered by {getProcessNameFromPID(data.ProcessID)}(PID: {data.ProcessID})");
+                                    Console.WriteLine($"[!] Rule {rule.Name} triggered by {getProcessNameFromPID(data.ProcessID)}(PID: {data.ProcessID})");
                                     for (int i = 0; i < data.PayloadNames.Length; i++)
                                     {
                                         Console.WriteLine($"\t{data.PayloadNames[i]} - {data.PayloadValue(i)}");
                                     }
                                 } else
                                 {
-                                    Console.WriteLine($"[!] Rule {rule.Name}({rule.ID}) triggered");
+                                    Console.WriteLine($"[!] Rule {rule.Name} triggered");
                                 }
 
                             }

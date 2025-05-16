@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Xml.Linq;
 using System.Linq;
-using System.IO;
 using System.Collections.Generic;
 
 namespace Filter
@@ -37,7 +36,7 @@ namespace Filter
                 //Console.WriteLine($"  Endpoint: {endpoint ?? "Not found (or empty)"}");
                 //Console.WriteLine("-----------------------------------");
                 rules.Add(new Rule(ruleId, ruleName, interfaceUuid, opNum, endpoint));
-                Console.WriteLine($"[+] Registered new rule '{ruleName}' with id {ruleId}");
+                Console.WriteLine($"[+] Registered rule '{ruleName}' with id {ruleId}");
             }
 
             return rules;

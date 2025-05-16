@@ -2,10 +2,7 @@
 using Microsoft.Diagnostics.Tracing.Session;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -22,7 +19,6 @@ namespace ETW
             {
                 Console.WriteLine("This program must be run as an administrator to collect ETW events.");
                 Console.WriteLine("Please restart the application with administrative privileges.");
-                Console.ReadKey();
                 return;
             }
 
@@ -38,7 +34,7 @@ namespace ETW
             Console.CancelKeyPress += (s, e) =>
             {
                 e.Cancel = true;
-                Console.WriteLine("Stopping ETW session...");
+                Console.WriteLine("\nStopping ETW session...");
                 cts.Cancel();
             };
 
@@ -51,24 +47,14 @@ namespace ETW
                 session.EnableProvider(RpcProviderGuid, TraceEventLevel.Verbose, ulong.MaxValue);
 
                 source = new ETWTraceEventSource(SessionName, TraceEventSourceType.Session);
-
-                // Subscribe to specific events or all events and filter
-                // RpcClientCallStart (Event ID 5) and RpcServerCallStart (Event ID 6) usually have this info.
                 source.Dynamic.All += delegate (TraceEvent data)
                 {
-                    // We are interested in events that contain Interface UUID and ProcNum (Opnum)
-                    // These are typically RpcClientCallStart (ID 5) and RpcServerCallStart (ID 6)
-                    // Let's check if the payload names exist before trying to access them.
-
                     object interfaceUuidObj = null;
                     object procNumObj = null;
+                    object endpoint = null;
                     bool foundInterfaceUuid = false;
                     bool foundProcNum = false;
-
-                    // Try to get payload data by common names
-                    // The actual names can sometimes vary slightly or depend on the event version.
-                    // Common names: "InterfaceUuid", "ProcNum"
-                    // You might need to inspect raw event data if these don't work for all desired events.
+                    bool foundendpoint = false;
 
                     for (int i = 0; i < data.PayloadNames.Length; i++)
                     {
@@ -82,56 +68,43 @@ namespace ETW
                         {
                             procNumObj = data.PayloadValue(i);
                             foundProcNum = true;
+                        } else if (string.Equals(data.PayloadNames[i], "Endpoint", StringComparison.OrdinalIgnoreCase))
+                        {
+                            endpoint = data.PayloadValue(i);
+                            foundendpoint = true;
                         }
 
-                        if (foundInterfaceUuid && foundProcNum) break;
+                        if (foundInterfaceUuid && foundProcNum && foundendpoint) break;
                     }
 
                     // Only print if we found the relevant information
                     if (foundInterfaceUuid && foundProcNum)
                     {
+                        if (interfaceUuidObj == null)
+                        {
+                            return;
+                        }
+                        var interface_uuid = interfaceUuidObj is Guid guidValue ? guidValue.ToString() : interfaceUuidObj;
+
                         foreach (Filter.Rule rule in rules)
                         {
-                            if (string.Equals(rule.InterfaceUUID, interfaceUuidObj) && string.Equals(rule.OpNum, procNumObj))
+                            if (string.Equals(rule.InterfaceUUID, Convert.ToString(interfaceUuidObj)) && string.Equals(rule.OpNum, Convert.ToString(procNumObj)) && string.Equals(rule.Endpoint, Convert.ToString(endpoint)))
                             {
-                                Console.WriteLine($"[!] Alert '{rule.Name}' with id '{rule.ID}' detected!");
+                                if (procNumObj != null)
+                                {
+                                    Console.WriteLine($"[!] Rule {rule.Name}({rule.ID}) triggered by {getProcessNameFromPID(data.ProcessID)}(PID: {data.ProcessID})");
+                                    for (int i = 0; i < data.PayloadNames.Length; i++)
+                                    {
+                                        Console.WriteLine($"\t{data.PayloadNames[i]} - {data.PayloadValue(i)}");
+                                    }
+                                } else
+                                {
+                                    Console.WriteLine($"[!] Rule {rule.Name}({rule.ID}) triggered");
+                                }
+
                             }
                         }
-                        //Console.WriteLine("--------------------------------------------------");
-                        //Console.WriteLine($"EVENT: {data.ProviderName}/{data.EventName} (ID: {data.ID})");
-                        //Console.WriteLine($"Timestamp: {data.TimeStamp.ToLocalTime()}");
-                        //Console.WriteLine($"Process: {data.ProcessName} (PID: {data.ProcessID})"); // This is the Process ID
-
-                        //if (interfaceUuidObj != null)
-                        //{
-                        //    // InterfaceUUID is typically a Guid
-                        //    if (interfaceUuidObj is Guid guidValue)
-                        //    {
-                        //        Console.WriteLine($"Interface UUID: {guidValue}");
-                        //    }
-                        //    else
-                        //    {
-                        //        Console.WriteLine($"Interface UUID: {interfaceUuidObj}"); // Print as string if not Guid
-                        //    }
-                        //}
-
-                        //if (procNumObj != null)
-                        //{
-                        //    // ProcNum is typically an integer (ushort or uint)
-                        //    Console.WriteLine($"Opnum: {procNumObj}");
-                        //}
-                        // Console.WriteLine("--------------------------------------------------\n");
                     }
-                    // Optional: You can log other RPC events too, or filter specifically for Event ID 5 or 6
-                    // else if (data.ID == 5 || data.ID == 6) // If specifically targeting these events
-                    // {
-                    //     Console.WriteLine($"DEBUG: Event {data.ID} ({data.EventName}) from PID {data.ProcessID} did not have expected InterfaceUuid/ProcNum fields or they were null.");
-                    //     // You could print all payload names here to help debug:
-                    //     // for (int i = 0; i < data.PayloadNames.Length; i++)
-                    //     // {
-                    //     //    Console.WriteLine($"  Available Field: {data.PayloadNames[i]} = {data.PayloadString(i)}");
-                    //     // }
-                    // }
                 };
 
                 Task.Run(() =>
@@ -142,7 +115,7 @@ namespace ETW
                     }
                     catch (ObjectDisposedException)
                     {
-                        // Session was likely stopped, ignore.
+                        // Session likely stopped, ignore.
                     }
                     catch (Exception ex)
                     {
@@ -182,5 +155,26 @@ namespace ETW
             var principal = new System.Security.Principal.WindowsPrincipal(identity);
             return principal.IsInRole(System.Security.Principal.WindowsBuiltInRole.Administrator);
         }
+
+        public static String getProcessNameFromPID(int pid)
+            {
+                string processNameFromPid = "N/A (Process may have exited)";
+                try
+                {
+                    Process p = Process.GetProcessById(pid);
+                    processNameFromPid = p.ProcessName;
+                    p.Dispose(); // Dispose the process object
+                }
+                catch (ArgumentException)
+                {
+                    // Process with data.ProcessID is not running or has exited
+                    processNameFromPid = $"N/A (Process ID {pid} not found or exited, ETW original: {pid})";
+                }
+                catch (Exception ex)
+                {
+                    processNameFromPid = $"N/A (Error fetching name for PID {pid}: {ex.GetType().Name}, ETW original: {pid})";
+                }
+                return processNameFromPid;
+            }
     }
 }

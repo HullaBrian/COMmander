@@ -54,9 +54,11 @@ namespace ETW
                     object interfaceUuidObj = null;
                     object procNumObj = null;
                     object endpoint = null;
+                    object networkaddress = null;
                     bool foundInterfaceUuid = false;
                     bool foundProcNum = false;
                     bool foundendpoint = false;
+                    bool foundNetworkAddress = false;
 
                     for (int i = 0; i < data.PayloadNames.Length; i++)
                     {
@@ -74,9 +76,13 @@ namespace ETW
                         {
                             endpoint = data.PayloadValue(i);
                             foundendpoint = true;
+                        } else if (string.Equals(data.PayloadNames[i], "NetworkAddress", StringComparison.OrdinalIgnoreCase))
+                        {
+                            networkaddress = data.PayloadValue(i);
+                            foundNetworkAddress = true;
                         }
 
-                        if (foundInterfaceUuid && foundProcNum && foundendpoint) break;
+                        if (foundInterfaceUuid && foundProcNum && foundendpoint && foundNetworkAddress) break;
                     }
 
                     // Only print if we found the relevant information
@@ -90,7 +96,7 @@ namespace ETW
 
                         foreach (Filter.Rule rule in rules)
                         {
-                            if (Filter.Filter.EvaluateRule(rule, interface_uuid, procNumObj, endpoint))
+                            if (Filter.Filter.EvaluateRule(rule, interface_uuid, procNumObj, endpoint, networkaddress))
                             {
                                 if (procNumObj != null)
                                 {

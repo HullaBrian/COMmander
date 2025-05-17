@@ -48,50 +48,30 @@ namespace Filter
                 string ruleName = ruleElement.Attribute("name")?.Value ?? "N/A";
 
                 XElement interfaceUuidElement = ruleElement.Element("InterfaceUUID");
-                string interfaceUuid;
-                if (interfaceUuidElement == null)
-                {
-                    interfaceUuid = ElementNotPresentValue;
-                }
-                else
-                {
-                    interfaceUuid = interfaceUuidElement.Value; // Present: value will be "" if empty, or actual content
-                }
+                string interfaceUuid = interfaceUuidElement == null ? ElementNotPresentValue : interfaceUuidElement.Value;
 
                 XElement opNumElement = ruleElement.Element("OpNum");
-                string opNum;
-                if (opNumElement == null)
-                {
-                    opNum = ElementNotPresentValue; // Element is not present
-                }
-                else
-                {
-                    opNum = opNumElement.Value; // Present: value will be "" if empty, or actual content
-                }
+                string opNum = opNumElement == null ? ElementNotPresentValue : opNumElement.Value;
 
                 XElement endpointElement = ruleElement.Element("Endpoint");
-                string endpoint;
-                if (endpointElement == null)
-                {
-                    endpoint = ElementNotPresentValue; // Element is not present
-                }
-                else
-                {
-                    endpoint = endpointElement.Value; // Present: value will be "" if empty, or actual content
-                }
+                string endpoint = endpointElement == null ? ElementNotPresentValue : endpointElement.Value ;
 
-                rules.Add(new Rule(ruleName, interfaceUuid, opNum, endpoint));
+                XElement networkAddress = ruleElement.Element("NetworkAddress");
+                string networkaddress = networkAddress == null ? ElementNotPresentValue : networkAddress.Value;
+
+                rules.Add(new Rule(ruleName, interfaceUuid, opNum, endpoint, networkaddress));
                 Console.WriteLine($"[+] Registered rule '{ruleName}'");
             }
 
             Console.WriteLine("[+] All rules loaded.");
             return rules;
         }
-        public static bool EvaluateRule(Rule rule, object eventInterfaceUuid, object eventOpNum, object eventEndpoint)
+        public static bool EvaluateRule(Rule rule, object eventInterfaceUuid, object eventOpNum, object eventEndpoint, object eventNetworkAddress)
         {
             string eventInterfaceUuidStr = Convert.ToString(eventInterfaceUuid);
             string eventOpNumStr = Convert.ToString(eventOpNum);
             string eventEndpointStr = Convert.ToString(eventEndpoint);
+            string eventNetworkAddressStr = Convert.ToString(eventNetworkAddress);
 
             bool interfaceMatch = rule.InterfaceUUID == ElementNotPresentValue ||
                                   string.Equals(rule.InterfaceUUID, eventInterfaceUuidStr, StringComparison.OrdinalIgnoreCase);
@@ -99,8 +79,9 @@ namespace Filter
                               string.Equals(rule.OpNum, eventOpNumStr, StringComparison.OrdinalIgnoreCase);
             bool endpointMatch = rule.Endpoint == ElementNotPresentValue ||
                                  string.Equals(rule.Endpoint, eventEndpointStr, StringComparison.OrdinalIgnoreCase);
+            bool networkAddressMatch = rule.NetworkAddress == ElementNotPresentValue || string.Equals(rule.NetworkAddress, eventNetworkAddressStr, StringComparison.OrdinalIgnoreCase);
 
-            return interfaceMatch && opNumMatch && endpointMatch;
+            return interfaceMatch && opNumMatch && endpointMatch && networkAddressMatch;
         }
     }
 }

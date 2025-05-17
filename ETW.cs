@@ -6,16 +6,14 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
-// TODO: Implement process filtering
-
 namespace ETW
 {
-    class Program
+    class Trace
     {
         private static readonly Guid RpcProviderGuid = new Guid("{6AD52B32-D609-4BE9-AE07-CE8DAE937E39}");
         private const string SessionName = "COMmander-RPC-ETW-Session";
 
-        static void Main(string[] args)
+        public static void Run()
         {
             if (!IsAdministrator())
             {

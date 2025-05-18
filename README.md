@@ -48,7 +48,7 @@ filter). Below is a table containing the possible values to use in the detection
 | Endpoint       | `\PIPE\DAV RPC SERVICE`                |
 | NetworkAddress | `NULL`                                 |
 
-Below is a sample configuration file tempalte:
+Below is a sample configuration file template:
 ```xml
 <Rules>
 	<Rule name="DCOM Invoked WebClient">

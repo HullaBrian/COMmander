@@ -8,7 +8,7 @@ _________  ________      _____                             .___
 ```
 
 # COMmander
-COMmander is a proof of concept tool that can enrich defensive telemetry around RPC and COM.
+COMmander is a tool written in C# that can enrich defensive telemetry around RPC and COM.
 
 COMmander leverages the `Microsoft-Windows-RPC` ETW provider to tap into low level RPC events.
 This provides detailed RPC-related events on the system that can provide defenders

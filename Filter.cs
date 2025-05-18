@@ -48,25 +48,28 @@ namespace Filter
                 string ruleName = ruleElement.Attribute("name")?.Value ?? "N/A";
 
                 XElement interfaceUuidElement = ruleElement.Element("InterfaceUUID");
-                string interfaceUuid = interfaceUuidElement == null ? ElementNotPresentValue : interfaceUuidElement.Value;
+                string interfaceUuidStr = interfaceUuidElement == null ? ElementNotPresentValue : interfaceUuidElement.Value;
 
                 XElement opNumElement = ruleElement.Element("OpNum");
-                string opNum = opNumElement == null ? ElementNotPresentValue : opNumElement.Value;
+                string opNumStr = opNumElement == null ? ElementNotPresentValue : opNumElement.Value;
 
                 XElement endpointElement = ruleElement.Element("Endpoint");
-                string endpoint = endpointElement == null ? ElementNotPresentValue : endpointElement.Value ;
+                string endpointStr = endpointElement == null ? ElementNotPresentValue : endpointElement.Value ;
 
                 XElement networkAddress = ruleElement.Element("NetworkAddress");
-                string networkaddress = networkAddress == null ? ElementNotPresentValue : networkAddress.Value;
+                string networkAddressStr = networkAddress == null ? ElementNotPresentValue : networkAddress.Value;
 
-                rules.Add(new Rule(ruleName, interfaceUuid, opNum, endpoint, networkaddress));
+                XElement processName = ruleElement.Element("ProcessName");
+                string processNameStr = processName == null ? ElementNotPresentValue : processName.Value;
+
+                rules.Add(new Rule(ruleName, interfaceUuidStr, opNumStr, endpointStr, networkAddressStr, processNameStr));
                 Console.WriteLine($"[+] Registered rule '{ruleName}'");
             }
 
             Console.WriteLine("[+] All rules loaded.");
             return rules;
         }
-        public static bool EvaluateRule(Rule rule, object eventInterfaceUuid, object eventOpNum, object eventEndpoint, object eventNetworkAddress)
+        public static bool EvaluateRule(Rule rule, object eventInterfaceUuid, object eventOpNum, object eventEndpoint, object eventNetworkAddress, int processID)
         {
             string eventInterfaceUuidStr = Convert.ToString(eventInterfaceUuid);
             string eventOpNumStr = Convert.ToString(eventOpNum);
@@ -80,8 +83,15 @@ namespace Filter
             bool endpointMatch = rule.Endpoint == ElementNotPresentValue ||
                                  string.Equals(rule.Endpoint, eventEndpointStr, StringComparison.OrdinalIgnoreCase);
             bool networkAddressMatch = rule.NetworkAddress == ElementNotPresentValue || string.Equals(rule.NetworkAddress, eventNetworkAddressStr, StringComparison.OrdinalIgnoreCase);
+            bool staticMatches = interfaceMatch && opNumMatch && endpointMatch && networkAddressMatch;
 
-            return interfaceMatch && opNumMatch && endpointMatch && networkAddressMatch;
+            if (staticMatches && rule.ProcessName != ElementNotPresentValue)  // Only calculate process name during rule evaluation if necessary
+            {
+                string ProcessName = ETW.Trace.getProcessNameFromPID(processID);
+                return string.Equals(rule.ProcessName, ProcessName, StringComparison.OrdinalIgnoreCase);
+            }
+
+            return staticMatches;
         }
     }
 }

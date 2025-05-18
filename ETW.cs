@@ -94,7 +94,7 @@ namespace ETW
 
                         foreach (Filter.Rule rule in rules)
                         {
-                            if (Filter.Filter.EvaluateRule(rule, interface_uuid, procNumObj, endpoint, networkaddress))
+                            if (Filter.Filter.EvaluateRule(rule, interface_uuid, procNumObj, endpoint, networkaddress, data.ProcessID))
                             {
                                 if (procNumObj != null)
                                 {

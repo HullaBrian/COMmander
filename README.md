@@ -47,6 +47,7 @@ filter). Below is a table containing the possible values to use in the detection
 | OpNum          | `13`                                   |
 | Endpoint       | `\PIPE\DAV RPC SERVICE`                |
 | NetworkAddress | `NULL`                                 |
+| ProcessName    | `lsass`                                |
 
 Below is a sample configuration file template:
 ```xml

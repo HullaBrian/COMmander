@@ -1,8 +1,10 @@
 ﻿using Microsoft.Diagnostics.Tracing;
 using Microsoft.Diagnostics.Tracing.Session;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 
 namespace COMmanderService.Modules
@@ -104,12 +106,15 @@ namespace COMmanderService.Modules
                             {
                                 if (procNumObj != null)
                                 {
-                                    // Console.WriteLine($"[!] Rule {rule.Name} triggered by {Modules.Helpers.GetProcessNameFromPID(data.ProcessID)}(PID: {data.ProcessID})");
-                                    eventLog.WriteEntry($"Rule '{rule.Name}' triggered", EventLogEntryType.Warning, 5, 1);
-                                    //for (int i = 0; i < data.PayloadNames.Length; i++)
-                                    //{
-                                    //    Console.WriteLine($"\t{data.PayloadNames[i]} - {data.PayloadValue(i)}");
-                                    //}
+                                    String eventData = $"Rule '{rule.Name}' triggered\n";
+                                    eventData += $"ProcessId: {data.ProcessID}\n";
+                                    eventData += $"ProcessName: {Modules.Helpers.GetProcessNameFromPID(data.ProcessID)}\n";
+                                    // Console.WriteLine($"[!] Rule {rule.Name} triggered by {Modules.Helpers.GetProcessNameFromPID(data.ProcessID)}(PID: {data.ProcessID})")
+                                    for (int i = 0; i < data.PayloadNames.Length; i++)
+                                    {
+                                        eventData += $"{data.PayloadNames[i]}: {data.PayloadValue(i)}\n";
+                                    }
+                                    eventLog.WriteEntry(eventData, EventLogEntryType.Warning, 5, 1);
                                 }
                                 else
                                 {

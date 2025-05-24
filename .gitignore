@@ -1,4 +1,4 @@
 .vs/*
-bin/*
-obj/*
-packages/*
+COMmander/bin/*
+COMmander/obj/*
+COMmander/packages/*

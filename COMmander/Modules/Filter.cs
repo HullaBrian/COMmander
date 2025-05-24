@@ -4,7 +4,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Filter
+namespace COMmander.Modules
 {
     internal class Filter
     {
@@ -66,7 +66,6 @@ namespace Filter
                 Console.WriteLine($"[+] Registered rule '{ruleName}'");
             }
 
-            Console.WriteLine("[+] All rules loaded.");
             return rules;
         }
         public static bool EvaluateRule(Rule rule, object eventInterfaceUuid, object eventOpNum, object eventEndpoint, object eventNetworkAddress, int processID)
@@ -87,7 +86,7 @@ namespace Filter
 
             if (staticMatches && rule.ProcessName != ElementNotPresentValue)  // Only calculate process name during rule evaluation if necessary
             {
-                string ProcessName = ETW.Trace.getProcessNameFromPID(processID);
+                string ProcessName = COMmander.Modules.Trace.getProcessNameFromPID(processID);
                 return string.Equals(rule.ProcessName, ProcessName, StringComparison.OrdinalIgnoreCase);
             }
 

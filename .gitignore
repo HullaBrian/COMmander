@@ -2,3 +2,6 @@
 COMmander/bin/*
 COMmander/obj/*
 COMmander/packages/*
+COMmanderService/bin/*
+COMmanderService/obj/*
+COMmanderService/packages/*

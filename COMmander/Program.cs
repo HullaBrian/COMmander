@@ -21,7 +21,7 @@ _________  ________      _____                             .___
         static void Main(string[] args)
         {
             printLogo();
-            ETW.Trace.Run();
+            COMmander.Modules.Trace.Run();
         }
     }
 }

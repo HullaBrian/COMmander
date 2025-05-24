@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace COMmander
+namespace COMmanderService
 {
     class Rule
     {
@@ -15,6 +19,5 @@ namespace COMmander
             this.NetworkAddress = NetworkAddress;
             this.ProcessName = ProcessName;
         }
-
     }
 }

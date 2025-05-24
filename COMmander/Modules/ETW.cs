@@ -6,7 +6,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ETW
+namespace COMmander.Modules
 {
     class Trace
     {
@@ -23,8 +23,8 @@ namespace ETW
             }
 
             Console.WriteLine("[+] Loading configuration rules...");
-            List<Filter.Rule> rules = Filter.Filter.Load();
-            Console.WriteLine("[+] Loaded configuration rules!");
+            List<COMmander.Rule> rules = COMmander.Modules.Filter.Load();
+            Console.WriteLine("[+] Loaded configuration rules!\n");
 
             Console.WriteLine($"[+] Starting ETW session for provider: Microsoft-Windows-RPC ({RpcProviderGuid})");
             Console.WriteLine($"[+] Session Name: {SessionName}");
@@ -92,9 +92,9 @@ namespace ETW
                         }
                         var interface_uuid = interfaceUuidObj is Guid guidValue ? guidValue.ToString() : interfaceUuidObj;
 
-                        foreach (Filter.Rule rule in rules)
+                        foreach (COMmander.Rule rule in rules)
                         {
-                            if (Filter.Filter.EvaluateRule(rule, interface_uuid, procNumObj, endpoint, networkaddress, data.ProcessID))
+                            if (COMmander.Modules.Filter.EvaluateRule(rule, interface_uuid, procNumObj, endpoint, networkaddress, data.ProcessID))
                             {
                                 if (procNumObj != null)
                                 {

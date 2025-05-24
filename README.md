@@ -22,7 +22,7 @@ and send alerts in the terminal if any are encountered.
 
 One of the issues with handling so many events is that it often requires a significant amount
 of resources to run. However, COMmander is extremely lightweight, and consistently uses minimal
-resources while still providing the detection functionality.
+resources while still providing detection functionality.
 
 ![image](https://github.com/user-attachments/assets/916bb7e0-70d5-41a9-98e1-c87e3a680593)
 

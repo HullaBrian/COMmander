@@ -29,7 +29,37 @@ resources while still providing the detection functionality.
 # Build Instructions
 Open in Visual Studio and press the build button.
 
-# Usage
+# Service Usage
+## Installation
+1. Download the latest release from this repository.
+2. Run the `InstallService.ps1` powershell script as an **administrator**
+	- Service files are stored in `C:\Program Files\COMmander`
+ 	- The service is called `COMmander` and runs as the local system account
+3. Run `Start-Service COMmander`
+
+## Uninstall
+To uninstall COMmander, run the `UninstallService.ps1` script included in the releases
+of this repository as an **administrator**.
+
+## Event Viewer
+COMmander's service will attempt to log events in the Windows Event Viewer, under the name
+`COMmander` beneath the `Application and Service Logs` section.
+
+![image](https://github.com/user-attachments/assets/9495e225-e1d4-49a5-9844-963e4dd2ccc0)
+
+Below are the event IDs that you will see in the event viewer.
+
+| Event ID | Event Type  | Description                       |
+|----------|-------------|-----------------------------------|
+| 1        | Information | The service is starting           |
+| 2        | Information | The service is stopping           |
+| 3        | Information | A rule was loaded                 |
+| 4        | Error       | There was an error during runtime |
+| 5        | Warning     | A detection was triggered         |
+
+![image](https://github.com/user-attachments/assets/2ba136c4-e3a8-4a8f-9fd1-c8f4ba816183)
+
+# Command-Line Usage
 ```shell
 COMmander.exe
 ```

@@ -133,6 +133,7 @@
   <ItemGroup>
     <Compile Include="Modules\ETW.cs" />
     <Compile Include="Modules\Filter.cs" />
+    <Compile Include="Modules\Helpers.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rule.cs" />

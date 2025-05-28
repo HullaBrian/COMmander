@@ -86,7 +86,7 @@ namespace COMmander.Modules
 
             if (staticMatches && rule.ProcessName != ElementNotPresentValue)  // Only calculate process name during rule evaluation if necessary
             {
-                string ProcessName = COMmander.Modules.Trace.getProcessNameFromPID(processID);
+                string ProcessName = Helpers.getProcessNameFromPID(processID);
                 return string.Equals(rule.ProcessName, ProcessName, StringComparison.OrdinalIgnoreCase);
             }
 

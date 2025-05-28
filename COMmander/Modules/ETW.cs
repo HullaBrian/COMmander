@@ -2,7 +2,6 @@
 using Microsoft.Diagnostics.Tracing.Session;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -15,7 +14,7 @@ namespace COMmander.Modules
 
         public static void Run()
         {
-            if (!IsAdministrator())
+            if (!Helpers.IsAdministrator())
             {
                 Console.WriteLine("This program must be run as an administrator to collect ETW events.");
                 Console.WriteLine("Please restart the application with administrative privileges.");
@@ -98,7 +97,7 @@ namespace COMmander.Modules
                             {
                                 if (procNumObj != null)
                                 {
-                                    Console.WriteLine($"[!] Rule {rule.Name} triggered by {getProcessNameFromPID(data.ProcessID)}(PID: {data.ProcessID})");
+                                    Console.WriteLine($"[!] Rule {rule.Name} triggered by {Helpers.getProcessNameFromPID(data.ProcessID)}(PID: {data.ProcessID})");
                                     for (int i = 0; i < data.PayloadNames.Length; i++)
                                     {
                                         Console.WriteLine($"\t{data.PayloadNames[i]} - {data.PayloadValue(i)}");
@@ -154,33 +153,5 @@ namespace COMmander.Modules
                 Console.WriteLine("Session stopped and disposed. Exiting.");
             }
         }
-
-        public static bool IsAdministrator()
-        {
-            var identity = System.Security.Principal.WindowsIdentity.GetCurrent();
-            var principal = new System.Security.Principal.WindowsPrincipal(identity);
-            return principal.IsInRole(System.Security.Principal.WindowsBuiltInRole.Administrator);
-        }
-
-        public static String getProcessNameFromPID(int pid)
-            {
-                string processNameFromPid = "N/A (Process may have exited)";
-                try
-                {
-                    Process p = Process.GetProcessById(pid);
-                    processNameFromPid = p.ProcessName;
-                    p.Dispose(); // Dispose the process object
-                }
-                catch (ArgumentException)
-                {
-                    // Process with data.ProcessID is not running or has exited
-                    processNameFromPid = $"N/A (Process ID {pid} not found or exited, ETW original: {pid})";
-                }
-                catch (Exception ex)
-                {
-                    processNameFromPid = $"N/A (Error fetching name for PID {pid}: {ex.GetType().Name}, ETW original: {pid})";
-                }
-                return processNameFromPid;
-            }
     }
 }

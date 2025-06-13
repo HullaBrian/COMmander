@@ -19,6 +19,7 @@ namespace COMmander.Modules
             {
                 Console.WriteLine($"[-] Configuration file '{config_file_path}' not found.");
                 Console.ReadKey();
+                Environment.Exit(1);
                 return rules;
             }
 

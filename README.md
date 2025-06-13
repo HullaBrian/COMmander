@@ -26,6 +26,10 @@ resources while still providing detection functionality.
 
 ![image](https://github.com/user-attachments/assets/916bb7e0-70d5-41a9-98e1-c87e3a680593)
 
+> [!WARNING]  
+> Running the CLI application and service binary at the same time will break the service. Restart
+> the service if this occurs.
+
 # Build Instructions
 Open in Visual Studio and press the build button.
 
@@ -35,7 +39,7 @@ Open in Visual Studio and press the build button.
 2. Run the `InstallService.ps1` powershell script as an **administrator**
 	- Service files are stored in `C:\Program Files\COMmander`
  	- The service is called `COMmander` and runs as the local system account
-3. Run `Start-Service COMmander`
+3. Run `Start-Service COMmander` if it isn't started already
 
 ## Uninstall
 To uninstall COMmander, run the `UninstallService.ps1` script included in the releases

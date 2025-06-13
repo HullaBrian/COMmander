@@ -1,0 +1,46 @@
+<Rules>
+	<Rule name="defendnot">
+		<InterfaceUUID>06bba54a-be05-49f9-b0a0-30f790261023</InterfaceUUID>
+		<OpNum>13</OpNum>
+		<Endpoint></Endpoint>
+	</Rule>
+	<Rule name="DCOM Invoked WebClient">
+		<InterfaceUUID>c8cb7687-e6d3-11d2-a958-00c04f682e16</InterfaceUUID>
+		<Endpoint>\PIPE\DAV RPC SERVICE</Endpoint>
+		<NetworkAddress>NULL</NetworkAddress>
+	</Rule>
+	<Rule name="Authentication Coercion using PetitPotam EfsRpcOpenFileRaw">
+		<InterfaceUUID>c681d488-d850-11d0-8c52-00c04fd90f7e</InterfaceUUID>
+		<OpNum>0</OpNum>
+		<ProcessName>lsass</ProcessName>
+	</Rule>
+	<Rule name="Authentication Coercion using PetitPotam EfsRpcEncryptFileSrv">
+		<InterfaceUUID>c681d488-d850-11d0-8c52-00c04fd90f7e</InterfaceUUID>
+		<OpNum>4</OpNum>
+	</Rule>
+	<Rule name="Authentication Coercion using PetitPotam EfsRpcDecryptFileSrv">
+		<InterfaceUUID>c681d488-d850-11d0-8c52-00c04fd90f7e</InterfaceUUID>
+		<OpNum>5</OpNum>
+	</Rule>
+	<Rule name="Authentication Coercion using PetitPotam EfsRpcQueryUsersOnFile">
+		<InterfaceUUID>c681d488-d850-11d0-8c52-00c04fd90f7e</InterfaceUUID>
+		<OpNum>6</OpNum>
+	</Rule>
+	<Rule name="Authentication Coercion using PetitPotam EfsRpcQueryRecoveryAgents">
+		<InterfaceUUID>c681d488-d850-11d0-8c52-00c04fd90f7e</InterfaceUUID>
+		<OpNum>7</OpNum>
+	</Rule>
+	<Rule name="Authentication Coercion using PetitPotam EfsRpcAddUsersToFile">
+		<InterfaceUUID>c681d488-d850-11d0-8c52-00c04fd90f7e</InterfaceUUID>
+		<OpNum>9</OpNum>
+	</Rule>
+	<Rule name="Remote Registry BaseRegSaveKey">
+		<InterfaceUUID>338CD001-2244-31F1-AAAA-900038001003</InterfaceUUID>
+		<Endpoint>\PIPE\winreg</Endpoint>
+		<OpNum>20</OpNum>
+	</Rule>
+	<Rule name="DCSync">
+		<InterfaceUUID>e3514235-4b06-11d1-ab04-00c04fc2dcd2</InterfaceUUID>
+		<OpNum>3</OpNum>
+	</Rule>
+</Rules>

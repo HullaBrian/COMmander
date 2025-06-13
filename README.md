@@ -41,6 +41,10 @@ Open in Visual Studio and press the build button.
  	- The service is called `COMmander` and runs as the local system account
 3. Run `Start-Service COMmander` if it isn't started already
 
+> [!NOTE]  
+> During the installation process, the script may open a window asking for the credentials
+> for the local system account. If this occurs, simply press enter.
+
 ## Uninstall
 To uninstall COMmander, run the `UninstallService.ps1` script included in the releases
 of this repository as an **administrator**.
